@@ -1,0 +1,26 @@
+<h2>Mis datos</h2>
+<p>Nombre: {{user.name}}</p>
+<p>Correo electronico: {{user.email}}</p>
+<p>Edad: {{user.age}}</p>
+<p>Rol: {{user.role}}</p>
+<a href="/api/sessions/logout"><button>Cerrar sesión</button></a>
+<h1>Productos</h1>
+<div>
+    {{#each products}}
+    <div>
+        <h3>{{this.title}}</h3>
+        <p>Categoría: {{this.category}}</p>
+        <p>{{this.description}}</p>
+        <p>$ {{this.price}}</p>
+        <p>{{this.stock}} disponible(s)</p>
+        <img src={{this.thumbnail}} alt={{this.title}}>
+    </div>
+    {{/each}}
+    {{#if hasPrevPage}}
+    <a href="/products?page={{prevPage}}&limit={{limit}}"><button>Anterior</button></a>
+    {{/if}}
+
+    {{#if hasNextPage}}
+    <a href="/products?page={{nextPage}}&limit={{limit}}"><button>Siguiente</button></a>
+    {{/if}}
+</div>
