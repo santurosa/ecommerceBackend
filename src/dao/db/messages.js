@@ -13,8 +13,8 @@ export default class Messages {
     addMessage = async (user, message) => {
         try {
             const newMessage = await messagesModel.create({
-               user,
-               message
+                user,
+                message
             })
             return newMessage;
         } catch (error) {

@@ -6,12 +6,15 @@ import session from "express-session";
 import cookieParser from 'cookie-parser';
 import passport from "passport";
 import compression from "express-compression";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 
 import initializePassport from "./config/passport.js";
 import config from "./config/config.js"
 import __dirname from "./utils.js";
 import errorHandler from './middlewares/errors/index.js';
 import addLogger from "./middlewares/logger.js";
+import { swaggerSession } from "./middlewares/auth.js";
 
 import productsRouter from "./routes/products.js";
 import cartsRouter from "./routes/carts.js";
@@ -48,6 +51,25 @@ app.use(session({
 }));
 app.use(passport.initialize());
 
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentacion E-commerce Backend',
+            description: 'API pensada para manejar un e-commerce. Proyecto final del curso Programación Backend.'
+        },
+        securityDefinitions: {
+            sessionAuth: {
+                type: 'apiKey',
+                name: 'sessionId',
+                in: 'cookie',
+            }
+        }
+    },
+    apis: [`${__dirname}/docs//*.yaml`]
+}
+
+app.use('/api/docs', swaggerSession, swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerJSDoc(swaggerOptions)));
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/", viewsRouter);

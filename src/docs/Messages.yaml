@@ -1,0 +1,70 @@
+paths:
+  /api/messages/:
+    get:
+      summary: Obtiene todos los mensajes desde la base de datos.
+      tags:
+        - Messages
+      responses:
+        "200":
+          description: Los mensajes fueron obtenidos satifactoriamente
+          content:
+            application/json:
+              schemas:
+                type: Array
+                items:
+                  $ref: "#components/schemas/Messages"
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
+    post:
+      summary: Crea un mensaje
+      tags:
+        - Messages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/createMessages"
+      responses:
+        "200":
+          description: Mensaje creado satifactoriamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Messages"
+        "422":
+          description: Error al intentar crear el mensaje debido a que no se recibio unas de sus propiedades o ninguna
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
+
+components:
+  schemas:
+    Messages:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado desde la base de datos de Mongo
+        user:
+          type: String
+          description: Correo electronico del usuario que envia el mensaje
+        message:
+          type: String
+          description: Mensaje que envia el usuario
+      example:
+        _id: ObjectId("ff7f2bea3ddff6f18a6295c1")
+        user: rebeca_palaciosgodinez@hotmail.com
+        message: ¡Hola! ¿Cómo estas?
+  requestBodies:
+    createMessages:
+      type: ObjectId
+      properties:
+        user:
+          type: String
+          description: Correo electronico del usuario que envia el mensaje
+        message:
+          type: String
+          description: Mensaje que envia el usuario
+      example:
+        user: rebeca_palaciosgodinez@hotmail.com
+        message: ¡Hola! ¿Cómo estas?

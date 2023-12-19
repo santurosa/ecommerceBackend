@@ -117,7 +117,7 @@ export default class Carts {
                     code: EErrors.INVALID_TYPE_ERROR
                 })
             }
-            const cart = await cartsModel.findOneAndUpdate({ _id: idCart },
+            const cart = await cartsModel.updateOne({ _id: idCart },
                 {
                     $push: { products: products }
                 });
@@ -162,11 +162,11 @@ export default class Carts {
                     code: EErrors.DATABASE_ERROR
                 })
             }
-            const result = await cartsModel.findOneAndUpdate(
+            const result = await cartsModel.updateOne(
                 { _id: idCart, 'products.product': idProduct },
                 { $set: { 'products.$.quantity': quantity } }
             );
-            if (!result) {
+            if (result.modifiedCount === 0) {
                 CustomError.createError({
                     name: "Cart get error",
                     cause: searchByMongooseIdErrorInfo(idCart),
@@ -182,11 +182,11 @@ export default class Carts {
 
     deleteCart = async (id) => {
         try {
-            const result = await cartsModel.findByIdAndUpdate(
+            const result = await cartsModel.updateOne(
                 id,
                 { $set: { products: [] } }
             );
-            if (!result) {
+            if (result.modifiedCount === 0) {
                 CustomError.createError({
                     name: "Cart get error",
                     cause: searchByMongooseIdErrorInfo(id),

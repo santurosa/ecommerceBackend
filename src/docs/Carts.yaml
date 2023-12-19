@@ -1,0 +1,236 @@
+paths:
+  /api/carts/:
+    post:
+      summary: Crea un Carrito
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: Carrito creado satifactoriamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Cart"
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
+  /api/carts/{cid}:
+    get:
+      summary: Obtiene un solo carrito a partir de su Id
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que se desea solicitar
+          schemas:
+            $type: String
+      responses:
+        "200":
+          description: Carrito obtenido satifactoriamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Cart"
+        "422":
+          description: Error al intentar obtener el carrito debido a que no se recibio un Id valido.
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
+    put:
+      summary: Agrega productos a un solo carrito a partir de su Id y de productos que se pasen en el body
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que se desea actualizar
+          schemas:
+            $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/updateProducts"
+      responses:
+        "200":
+          description: Carrito actualizado satifactoriamente
+        "422":
+          description: Error al intentar actualizar el carrito debido a que no se recibio un Id valido o no fue recibida ningun producto para actualizar
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
+    delete:
+      summary: Elimina un solo carrito a partir de su Id
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que se desea eliminar
+          schemas:
+            $type: String
+      responses:
+        "200":
+          description: Carrito eliminado satifactoriamente
+        "422":
+          description: Error al intentar eliminar el carrito debido a que no se recibio un Id valido.
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
+  /api/carts/{cid}/product/{pid}:
+    put:
+      summary: Agrega productos a un solo carrito a partir de su Id y el Id del producto
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que se desea actualizar
+          schemas:
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que se desea actualizar
+          schemas:
+            $type: String
+      responses:
+        "200":
+          description: Carrito actualizado satifactoriamente
+        "422":
+          description: Error al intentar actualizar el carrito debido a que no se recibio un Id valido.
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
+    delete:
+      summary: Elimina un solo carrito a partir de su Id
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que se desea eliminar
+          schemas:
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que se desea actualizar
+          schemas:
+            $type: String
+      responses:
+        "200":
+          description: Carrito eliminado satifactoriamente
+        "422":
+          description: Error al intentar eliminar el carrito debido a que no se recibio un Id valido.
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
+  /api/carts/{cid}/products/{pid}:
+    put:
+      summary: Modifica la cantidad de unidades pedidas de un producto a partir del Id del carrito y de productos que se pasen en el body
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que se desea actualizar
+          schemas:
+            $type: String
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que se desea actualizar
+          schemas:
+            $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/updateProducts"
+      responses:
+        "200":
+          description: Carrito actualizado satifactoriamente
+        "422":
+          description: Error al intentar actualizar el carrito debido a que no se recibio un Id valido
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
+  /api/carts/{cid}/purchase:
+    post:
+      summary: Cierra una orden vaciando el carrito y generando un Ticket en la base de datos a partir del Id del carrito
+      tags:
+        - Tickets
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito con el que se desea realizar la orden
+          schemas:
+            $type: String
+      responses:
+        "200":
+          description: Orden creada satifactoriamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Ticket"
+        "422":
+          description: Error al intentar cerrar el carrito debido a que no se recibio un Id valido.
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado desde la base de datos de Mongo
+        products:
+          type: Array
+          description: Un Array con los productos que tiene el carrito y sus respectivas cantidades pedidas. Se debe pasar un Id para identificar al producto en la base de datos de tipo ObjectId y un Number con las cantidades de unidades solicitadas del producto. Por defecto se genera un Array vacio
+      example:
+        _id: ObjectId("ff7f2bea3ddff6f18a6295c1")
+        products:
+          [
+            { product: "ae81f32e8b6f9fec9630be78", quantity: 4 },
+            { product: "19ec781590e0aa9d1c59b0d0", quantity: 1 },
+          ]
+    Ticket:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado desde la base de datos de Mongo
+        code:
+          type: String
+          description: Codigo unico para la orden autogenerado por el servidor de manera aleatoria
+        purchase_datetime:
+          type: Date
+          description: Momento exacto en el que se creo la orden, esta fecha es autop generada por el servidor
+        amount:
+          type: Number
+          description: Suma total del valor de lo pedido por el cliente
+        purchaser:
+          type: String
+          description: Correo electronico del usuario que finalizo la compra
+      example:
+        _id: ObjectId("cc00edaedb61b302ddcdecf5")
+        code: 2746378463
+        purchase_datetime: Tue Nov 21 2023 20:02:53 GMT-0300 (hora estándar de Argentina)
+        amount: 12.57
+        purchaser: example@email.com
+  requestBodies:
+    updateProducts:
+      type: ObjectId
+      properties:
+        products:
+          type: Array
+          description: Un Array con los productos que tiene el carrito y sus respectivas cantidades pedidas. Se debe pasar un Id para identificar al producto en la base de datos de tipo ObjectId y un Number con las cantidades de unidades solicitadas del producto
+      example:
+        _id: ObjectId("ff7f2bea3ddff6f18a6295c1")
+        products: [{ product: "ae81f32e8b6f9fec9630be78", quantity: 4 }]

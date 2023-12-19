@@ -1,0 +1,207 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtiene todos los productos paginados con un limite por defecto de 10 productos.
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Los productos fueron obtenidos satifactoriamente
+          content:
+            application/json:
+              schemas:
+                type: Array
+                items:
+                  $ref: "#components/schemas/Product"
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
+    post:
+      summary: Crea un producto
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/modificateProduct"
+      responses:
+        "200":
+          description: Producto creado satifactoriamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Product"
+        "422":
+          description: Error al intentar crear el producto debido a que no se recibio unas de sus propiedades o ninguna
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
+  /api/products/{pid}:
+    get:
+      summary: Obtiene un solo producto a partir de su Id
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que se desea solicitar
+          schemas:
+            $type: String
+      responses:
+        "200":
+          description: Producto obtenido satifactoriamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Product"
+        "422":
+          description: Error al intentar obtener el producto debido a que no se recibio un Id valido.
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
+    put:
+      summary: Actualiza un solo producto a partir de su Id
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que se desea actualizar
+          schemas:
+            $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/modificateProduct"
+      responses:
+        "200":
+          description: Producto actualizado satifactoriamente
+        "422":
+          description: Error al intentar crear el producto debido a que no se recibio un Id valido o no fue recibida ninguna propiedad del producto para actualizar
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
+    delete:
+      summary: Elimina un solo producto a partir de su Id
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id del producto que se desea eliminar
+          schemas:
+            $type: String
+      responses:
+        "200":
+          description: Producto eliminado satifactoriamente
+        "422":
+          description: Error al intentar eliminar el producto debido a que no se recibio un Id valido.
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
+  /api/products/mockingproducts:
+    get:
+      summary: Obtiene 100 productos autogenerados aletoriamente.
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Los usuarios fueron obtenidos satifactoriamente
+          content:
+            application/json:
+              schemas:
+                type: Array
+                items:
+                  $ref: "#components/schemas/Product"
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado desde la base de datos de Mongo
+        title:
+          type: String
+          description: Titulo o nombre del producto. Debe ser único
+        description:
+          type: String
+          description: Descripción del producto
+        price:
+          type: Number
+          description: Precio del producto. Debe ser mayor a 0
+        status:
+          type: Boolean
+          description: El estado inica si el producto va a ser visible al cliente o no. Por defecto se genera en true
+        stock:
+          type: Number
+          description: Stock del producto. Debe ser mayor a 0
+        category:
+          type: String
+          description: Categoria del producto
+        thumbnail:
+          type: Array
+          description: Un Array con String con las urls de las imagenes del producto. Por defecto se generara un Array con un String que diga "Sin imagenes"
+        owner:
+          type: String
+          description: Correo electronico del propietario del producto. Este debe respetar dicho formato. Por defecto se cargara el mail del usuario admin
+      example:
+        _id: ObjectId("ff7f2bea3ddff6f18a6295c1")
+        title: Toallas
+        description: Pequeño Hormigon Pollo
+        price: 116
+        status: true
+        stock: 439
+        category: Marroquinería
+        thumbnail:
+          [
+            "https://picsum.photos/seed/o9IdWbIT/640/480",
+            "https://loremflickr.com/640/480?lock=118035641794560",
+            "https://picsum.photos/seed/qfxeQr/640/480",
+            "https://loremflickr.com/640/480?lock=4576315290157056",
+          ]
+        owner: rebeca_palaciosgodinez@hotmail.com
+  requestBodies:
+    modificateProduct:
+      type: ObjectId
+      properties:
+        title:
+          type: String
+          description: Titulo o nombre del producto. Debe ser único
+        description:
+          type: String
+          description: Descripción del producto
+        price:
+          type: Number
+          description: Precio del producto. Debe ser mayor a 0
+        status:
+          type: Boolean
+          description: El estado inica si el producto va a ser visible al cliente o no. Por defecto se genera en true
+        stock:
+          type: Number
+          description: Stock del producto. Debe ser mayor a 0
+        category:
+          type: String
+          description: Categoria del producto
+        thumbnail:
+          type: Array
+          description: Un Array con String con las urls de las imagenes del producto. Por defecto se generara un Array con un String que diga "Sin imagenes"
+      example:
+        title: Toallas
+        description: Pequeño Hormigon Pollo
+        price: 116
+        status: true
+        stock: 439
+        category: Marroquinería
+        thumbnail:
+          [
+            "https://picsum.photos/seed/o9IdWbIT/640/480",
+            "https://loremflickr.com/640/480?lock=118035641794560",
+            "https://picsum.photos/seed/qfxeQr/640/480",
+            "https://loremflickr.com/640/480?lock=4576315290157056",
+          ]

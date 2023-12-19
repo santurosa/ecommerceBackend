@@ -31,6 +31,7 @@ export const mockingProducts = async (number) => {
             stock: faker.number.int({ min: 0, max: 500 }),
             category: faker.commerce.department(),
             thumbnail: images,
+            owner: faker.internet.email()
         }
         products.push(new ProductDTO(product));
         images = [];
