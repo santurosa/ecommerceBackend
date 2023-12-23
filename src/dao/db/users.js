@@ -25,7 +25,17 @@ export default class Users {
 
     createUser = async (user) => {
         try {
-            const result = await userModel.create(user);
+            const creation = await userModel.create(user);
+            const result = await userModel.findById(creation._id).lean();
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    deleteUserById = async (id) => {
+        try {
+            const result = await userModel.findByIdAndDelete(id);
             return result;
         } catch (error) {
             throw error;

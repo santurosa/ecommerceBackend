@@ -183,10 +183,10 @@ export default class Carts {
     deleteCart = async (id) => {
         try {
             const result = await cartsModel.updateOne(
-                id,
+                {_id: id },
                 { $set: { products: [] } }
             );
-            if (result.modifiedCount === 0) {
+            if (result.matchedCount === 0) {
                 CustomError.createError({
                     name: "Cart get error",
                     cause: searchByMongooseIdErrorInfo(id),

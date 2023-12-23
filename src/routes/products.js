@@ -4,9 +4,9 @@ import { applyPolicy } from "../middlewares/auth.js";
 
 const router = Router();
 
-router.get("/", getProducts);
-router.get("/mockingproducts", mocking);
-router.get("/:pid", getProductById);
+router.get("/", applyPolicy(['PUBLIC']), getProducts);
+router.get("/mockingproducts", applyPolicy(['PUBLIC']), mocking);
+router.get("/:pid", applyPolicy(['PUBLIC']), getProductById);
 router.post("/", applyPolicy(['ADMIN', 'USER_PREMIUM']), createProducts);
 router.put("/:pid", applyPolicy(['ADMIN', 'USER_PREMIUM']), upgrateProduct);
 router.delete("/:pid", applyPolicy(['ADMIN', 'USER_PREMIUM']), deleteProduct);

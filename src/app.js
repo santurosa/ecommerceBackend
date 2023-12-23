@@ -12,9 +12,9 @@ import swaggerUiExpress from "swagger-ui-express";
 import initializePassport from "./config/passport.js";
 import config from "./config/config.js"
 import __dirname from "./utils.js";
-import errorHandler from './middlewares/errors/index.js';
+import errorHandler from './middlewares/errors.js';
 import addLogger from "./middlewares/logger.js";
-import { swaggerSession } from "./middlewares/auth.js";
+import { applyPolicy } from "./middlewares/auth.js";
 
 import productsRouter from "./routes/products.js";
 import cartsRouter from "./routes/carts.js";
@@ -26,30 +26,31 @@ import loggerRouter from './routes/logger.js';
 const app = express();
 const port = config.port || 3000;
 const urlMongo = config.mongoUrl;
-const sessionSecret = config.sessionSecret;
+const jwtSecret = config.jwtSecret;
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 app.use(addLogger);
+app.use('/static', express.static(`${__dirname}/public`))
+app.use(cookieParser());
+initializePassport();
+app.use(passport.initialize());
 
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
-app.use('/static', express.static(`${__dirname}/public`))
 
-app.use(cookieParser());
-initializePassport();
+
 app.use(session({
     store: MongoStore.create({
         mongoUrl: urlMongo,
         ttl: 3600
     }),
-    secret: sessionSecret,
+    secret: jwtSecret,
     resave: false,
     saveUninitialized: false
 }));
-app.use(passport.initialize());
 
 const swaggerOptions = {
     definition: {
@@ -57,19 +58,12 @@ const swaggerOptions = {
         info: {
             title: 'Documentacion E-commerce Backend',
             description: 'API pensada para manejar un e-commerce. Proyecto final del curso Programación Backend.'
-        },
-        securityDefinitions: {
-            sessionAuth: {
-                type: 'apiKey',
-                name: 'sessionId',
-                in: 'cookie',
-            }
         }
     },
     apis: [`${__dirname}/docs//*.yaml`]
 }
 
-app.use('/api/docs', swaggerSession, swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerJSDoc(swaggerOptions)));
+app.use('/api/docs', applyPolicy(['PUBLIC']), swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerJSDoc(swaggerOptions)));
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/", viewsRouter);

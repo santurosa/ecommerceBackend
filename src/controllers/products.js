@@ -37,7 +37,7 @@ export const createProducts = async (req, res, next) => {
                 code: EErrors.INVALID_TYPE_ERROR
             })
         }
-        const product = { title, description, price, status, stock, category, thumbnail, owner: req.session.user.email };
+        const product = { title, description, price, status, stock, category, thumbnail, owner: req.user.email };
         const result = await productsService.createProducts(product);
         res.send({ status: "success", payload: result });
     } catch (error) {
@@ -57,9 +57,10 @@ export const upgrateProduct = async (req, res, next) => {
                 code: EErrors.INVALID_TYPE_ERROR
             })
         }
-        const result = await productsService.upgrateProduct(req.session.user.email, id, upgrate);
+        const result = await productsService.upgrateProduct(req.user.email, id, upgrate);
         res.send({ status: "success", payload: result });
     } catch (error) {
+        console.log(req.user)
         next(error);
     }
 }
@@ -67,7 +68,7 @@ export const upgrateProduct = async (req, res, next) => {
 export const deleteProduct = async (req, res, next) => {
     try {
         const id = req.params.pid;
-        const result = await productsService.deleteProduct(req.session.user.email, id);
+        const result = await productsService.deleteProduct(req.user.email, id);
         res.send({ status: "success", payload: result });
     } catch (error) {
         next(error);

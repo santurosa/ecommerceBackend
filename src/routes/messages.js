@@ -4,7 +4,7 @@ import { applyPolicy } from "../middlewares/auth.js";
 
 const router = Router();
 
-router.get("/", getMessages);
+router.get("/", applyPolicy(['PUBLIC']), getMessages);
 router.post("/", applyPolicy(['USER']), addMessage);
 
 export default router

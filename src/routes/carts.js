@@ -5,8 +5,8 @@ import { applyPolicy } from "../middlewares/auth.js";
 const router = Router();
 
 
-router.get("/:cid", getCart);
-router.post("/", createCart);
+router.get("/:cid", applyPolicy(['PUBLIC']), getCart);
+router.post("/", applyPolicy(['PUBLIC']), createCart);
 router.put("/:cid/product/:pid", applyPolicy(['USER', 'USER_PREMIUM']), upgrateCart);
 router.put("/:cid", applyPolicy(['USER', 'USER_PREMIUM']), upgrateCartByBody);
 router.put("/:cid/products/:pid", applyPolicy(['USER', 'USER_PREMIUM']), updateQuantityProducts);

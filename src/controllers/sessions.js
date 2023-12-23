@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 import { usersService } from "../repositories/index.js";
 import CustomError from "../service/errors/CustomError.js";
@@ -6,8 +7,8 @@ import MailingService from "../service/maling/mailing.js";
 
 export const login = async (req, res) => {
     try {
-        if(!req.user) return res.status(400).send({ status: "error", error: "Credenciales incorrectas" });
-        req.session.user = {
+        if (!req.user) return res.status(400).send({ status: "error", error: "Credenciales incorrectas" });
+        const user = {
             _id: req.user._id,
             name: `${req.user.first_name} ${req.user.last_name}`,
             email: req.user.email,
@@ -15,7 +16,8 @@ export const login = async (req, res) => {
             cart: req.user.cart,
             role: req.user.role
         }
-        res.send({ status: "success", payload: req.session.user });
+        const token = jwt.sign(user, config.jwtSecret, { expiresIn: '1h' });
+        res.cookie('token', token, { httpOnly: true, maxAge: 60 * 60 * 1000 }).send({ status: "success", user });
     } catch (error) {
         req.logger.error(`The cause is '${error}' in ${req.method} at ${req.url} - ${new Date().toString()} `);
         res.status(401).send({ status: "error", error: "Credenciales incorrectas" });
@@ -35,63 +37,65 @@ export const failRegister = (req, res) => {
 }
 
 export const logout = (req, res) => {
-    req.session.destroy(error => {
-        if (error) return res.send({ status: "Logout ERROR", body: error });
-        res.redirect("/login");
-    })
+    try {
+        res.cookie('token', '', { expires: new Date(0), httpOnly: true }).redirect('/login');
+    } catch (error) {
+        throw error;
+    }
 }
 
 export const githubcallback = async (req, res) => {
     const user = req.user;
     delete user.password;
-    req.session.user = user;
+    req.user = user;
     res.redirect("/products");
 }
 
 export const current = (req, res) => {
-    const user = req.session.user;
-    if (user) {
+    if (req.user) {
+        const user = {
+            _id: req.user._id,
+            name: req.user.name,
+            email: req.user.email,
+            age: req.user.age,
+            cart: req.user.cart,
+            role: req.user.role
+        }
         res.send({ status: "success", user });
     } else {
         res.send({ status: "error", message: "No hay un usuario logueado" });
     }
 }
 
-export const recoverPassword = (req, res) => {
-    const { email } = req.query;
+export const recoverPassword = async (req, res, next) => {
     try {
-        const mailer = new MailingService(); 
+        const { email } = req.query;
+        const isUser = await usersService.getUserByEmail(email);
+        if (!isUser) CustomError.createError({
+            name: "User trying update error",
+            cause: `The email ${email} is not an ecommerce user.`,
+            message: "Error trying update User's password",
+            code: EErrors.INVALID_PARAMS_ERROR
+        })
+        const token = jwt.sign({ email }, config.jwtSecret, { expiresIn: '1h' });
+        const mailer = new MailingService();
         const result = mailer.sendSimpleMail({
             from: 'E-Commerce <santurosa999@gmail.com>',
             to: email,
             subject: 'Restablecer contraseña',
             html: `<div><p> ¡Hola! Haz pedido cambiar tu contraseña de usuario. Hace click en el botón de abajo para cambiarla </p>
-            <a href="http://localhost:8080/restartpassword">Restablecer contraseña</a><div>`
+            <a href="http://localhost:8080/restartpassword/${token}">Restablecer contraseña</a><div>`
         })
-        req.session.recoverPassword = email;
-        res.send({ status: "success", message: `We will send you an email to ${email} so you can change your password` });        
+        res.cookie('recoverPassword', token, { httpOnly: true, maxAge: 60 * 60 * 1000 }).send({ status: "success", message: `We will send you an email to ${email} so you can change your password` });
     } catch (error) {
-        throw error;
+        next(error);
     }
 }
-
 export const restartPassword = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        if(!req.session.recoverPassword || req.session.recoverPassword != email) {
-            CustomError.createError({
-                name: "User update error",
-                cause: `The link has expired or it does not match the email that requested to reset the password.`,
-                message: "Error updating User's password",
-                code: EErrors.FORBIDDEN_ERROR
-            })
-            return res.redirect('/login');
-        }
         const result = await usersService.restartPassword(email, password);
-        req.session.recoverPassword.destroy(error => {
-            if (error) return res.send({ status: "Logout ERROR", body: error });
-            res.redirect("/login");
-        })
+        res.cookie('recoverPassword', '', { expires: new Date(0), httpOnly: true });
         res.send({ status: "success", message: "Password changed successfully", result });
     } catch (error) {
         next(error);
@@ -112,6 +116,16 @@ export const updateRole = async (req, res, next) => {
             code: EErrors.INVALID_TYPE_ERROR
         })
         res.send({ status: "success", message: `The user's role has been successfully changed to ${result}` });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const deleteUserById = async (req, res, next) => {
+    try {
+        const id = req.params.uid;
+        const result = await usersService.deleteUserById(id);
+        res.send({ status: "success", payload: result });
     } catch (error) {
         next(error);
     }

@@ -1,7 +1,7 @@
-import EErrors from "../../service/errors/enums.js";
+import EErrors from "../service/errors/enums.js";
 
 export default (error, req, res, next) => {
-    req.logger.error(`The cause is '${error.cause}' in ${req.method} at ${req.url} - ${new Date().toString()} `);
+    req.logger.error(`The cause is '${error.cause || error}' in ${req.method} at ${req.url} - ${new Date().toString()} `);
     switch (error.code) {
         case EErrors.INVALID_TYPE_ERROR:
             res.status(422).send({ status: 'error', error: error.name, cause: error.cause});

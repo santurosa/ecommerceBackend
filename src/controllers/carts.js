@@ -26,7 +26,7 @@ export const upgrateCart = async (req, res, next) => {
     try {
         const cid = req.params.cid;
         const pid = req.params.pid;
-        const result = await cartsService.upgrateCart(req.session.user.email, cid, pid);
+        const result = await cartsService.upgrateCart(req.user.email, cid, pid);
         res.send({ status: "success", payload: result });
     } catch (error) {
         next(error);
@@ -90,7 +90,7 @@ export const deleteProductToCart = async (req, res, next) => {
 export const purchase = async (req, res, next) => {
     try {
         const cid = req.params.cid;
-        const email = req.session.user.email;
+        const email = req.user.email;
         const result = await ticketsService.createTicket(cid, email);
         res.send({ status: "success", payload: result });
     } catch (error) {

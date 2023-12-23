@@ -22,6 +22,14 @@ export default class UserssRepository {
             throw error;
         }
     }
+    deleteUserById = async (id) => {
+        try {
+            const result = await this.dao.deleteUserById(id);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
     restartPassword = async (email, password) => {
         try {
             const result = await this.dao.restartPassword(email, password);

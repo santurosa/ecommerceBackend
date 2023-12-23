@@ -15,7 +15,7 @@ export default {
     mongoUrl: process.env.MONGO_URL,
     adminName: process.env.ADMIN_NAME,
     adminPassword: process.env.ADMIN_PASSWORD,
-    sessionSecret: process.env.SESSION_SECRET,
+    jwtSecret: process.env.JWT_SECRET,
     roleDocument: process.env.ROLE_DOCUMENT,
     mailingService: process.env.MALING_SERVICE,
     mailingUser: process.env.MAILING_USER,
