@@ -44,8 +44,8 @@ describe('Testing Sessions', () => {
         expect(body.user.email).to.be.eqls('prueba@testing.com');
         id = body.user._id;
     })
-    it('El metodo DELETE de "/api/sessions/:uid" debe eliminar el usuario correctamente con el id del usuario', async function () {
-        const { body } = await requester.delete(`/api/sessions/${id}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
+    it('El metodo DELETE de "/api/users/:uid" debe eliminar el usuario correctamente con el id del usuario', async function () {
+        const { body } = await requester.delete(`/api/users/${id}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
         expect(body).to.have.property('payload');
     })
     it('El metodo GET de "/api/sessions/logout" debe eliminar la session y dirigir a /login correctamente', async function () {

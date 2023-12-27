@@ -128,4 +128,39 @@ export default class Products {
             throw error;
         }
     }
+
+    updateThumbnails = async (email, id, thumbnail) => {
+        try {
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                CustomError.createError({
+                    name: "Product update error",
+                    cause: getByMongooseIdErrorInfo(id),
+                    message: "Error updating Product by ID",
+                    code: EErrors.INVALID_PARAMS_ERROR
+                })
+            }
+            const product = await productsModel.findById(id);
+            if (!product) CustomError.createError({
+                name: "Product update error",
+                cause: searchByMongooseIdErrorInfo(id),
+                message: "Error updating Product by ID",
+                code: EErrors.INVALID_TYPE_ERROR
+            })
+            if (email === product.owner || email === config.adminName) {
+                if (product.thumbnail[0] === "Sin imagenes") {
+                    const result = await productsModel.updateOne({ _id: id }, { $set: { thumbnail } });
+                    return result;
+                }
+                const result = await productsModel.updateOne({ _id: id }, { $push: { thumbnail } });
+                    return result;
+            } else CustomError.createError({
+                name: "Product update error",
+                cause: "You can only modify products that you own.",
+                message: "Error updating Product by ID",
+                code: EErrors.FORBIDDEN_ERROR
+            })
+        } catch (error) {
+            throw error;
+        }
+    }
 }

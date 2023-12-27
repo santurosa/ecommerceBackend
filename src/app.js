@@ -21,6 +21,7 @@ import cartsRouter from "./routes/carts.js";
 import viewsRouter from "./routes/views.js"
 import chatRouter from "./routes/messages.js";
 import sessionRouter from "./routes/sessions.js";
+import userRouter from "./routes/users.js";
 import loggerRouter from './routes/logger.js';
 
 const app = express();
@@ -69,6 +70,7 @@ app.use("/api/carts", cartsRouter);
 app.use("/", viewsRouter);
 app.use("/api/messages", chatRouter);
 app.use("/api/sessions", sessionRouter);
+app.use("/api/users", userRouter);
 app.use("/api/loggerTest", loggerRouter);
 
 app.use(errorHandler);

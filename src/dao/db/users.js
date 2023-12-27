@@ -61,10 +61,51 @@ export default class Users {
     }
     updateRole = async (id, role) => {
         try {
-            await userModel.updateOne({ _id: id }, { role: role });
+            await userModel.updateOne({ _id: id }, { role });
             return role;
         } catch (error) {
             throw error;
         }
     }
+    updateConnection = async (id, date) => {
+        try {
+            await userModel.updateOne({ _id: id }, { last_connection: date });
+            return date;
+        } catch (error) {
+            throw error;
+        }
+    }
+    updateDocuments = async (id, name, reference) => {
+        try {
+            let updateQuery;
+
+            if (name === 'profile') {
+                const existingProfile = await userModel.findOne({ _id: id, 'documents.name': 'profile' });
+                if (existingProfile) {
+                    updateQuery = {
+                        $set: { 'documents.$[element]': { name, reference } }
+                    };
+                } else {
+                    updateQuery = {
+                        $push: { documents: { name, reference } }
+                    };
+                }
+            } else {
+                updateQuery = {
+                    $push: { documents: { name, reference } }
+                };
+            }
+
+            const result = await userModel.updateOne(
+                { _id: id },
+                updateQuery,
+                { arrayFilters: [{ 'element.name': 'profile' }], new: true }
+            );
+
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    };
+
 }

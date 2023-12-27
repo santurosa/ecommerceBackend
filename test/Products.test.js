@@ -45,7 +45,7 @@ describe('Testing Products', () => {
     beforeEach(function(){
         this.timeout(5000);
     })
-    it('El metodo POST "/api/products/:pid" debe crear un producto correctamente', async function(){
+    it('El metodo POST "/api/products" debe crear un producto correctamente', async function(){
         const { body } = await requester.post('/api/products').send(productMock).set('Cookie', [`${cookie.name}=${cookie.value}`]);
         expect(body.payload).to.have.property('_id');
         id = body.payload._id;
@@ -65,6 +65,6 @@ describe('Testing Products', () => {
         expect(body.status).to.be.eqls('success');
     })
     after(async function(){
-        await requester.delete(`/api/sessions/${idUser}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
+        await requester.delete(`/api/users/${idUser}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
     })
 })

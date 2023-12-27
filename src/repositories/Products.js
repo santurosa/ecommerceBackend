@@ -21,6 +21,10 @@ export default class ProductsRepository {
         const result = await this.dao.upgrateProduct(email, id, product);
         return result;
     }
+    updateThumbnails = async (email, id, thumbnail) => {
+        const result = await this.dao.updateThumbnails(email, id, thumbnail);
+        return result;
+    }
     deleteProduct = async (email, id) => {
         const result = await this.dao.deleteProduct(email, id);
         return result;

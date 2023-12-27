@@ -3,6 +3,7 @@
 <p>Correo electronico: {{user.email}}</p>
 <p>Edad: {{user.age}}</p>
 <p>Rol: {{user.role}}</p>
+<a href="/carts/{{user.cart._id}}"><button>Carrito</button></a>
 <a href="/api/sessions/logout"><button>Cerrar sesión</button></a>
 <h1>Productos</h1>
 <div>
@@ -14,6 +15,8 @@
         <p>$ {{this.price}}</p>
         <p>{{this.stock}} disponible(s)</p>
         <img src={{this.thumbnail}} alt={{this.title}}>
+        <br>
+        <button class="addToCart" data-url="/api/carts/{{../user.cart._id}}/product/{{this._id}}">Agregar al Carrito</button>
     </div>
     {{/each}}
     {{#if hasPrevPage}}
@@ -24,3 +27,5 @@
     <a href="/products?page={{nextPage}}&limit={{limit}}"><button>Siguiente</button></a>
     {{/if}}
 </div>
+
+<script src="/static/js/products.js"></script>

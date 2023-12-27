@@ -27,7 +27,7 @@ const initializePassport = () => {
             if (username === admin.email || userExist) return done(null, false, { message: "User exist" });
             const cart = await cartsService.createCart();
             const cartToSave = cart._id;
-            const user = await usersService.createUser(first_name, last_name, email, age, password, cartToSave, role);
+            const user = await usersService.createUser(first_name, last_name, email, age, password, cartToSave, [], role);
             done(null, user);
         } catch (error) {
             throw done(error);
@@ -62,7 +62,7 @@ const initializePassport = () => {
                 const cart = await cartsService.createCart();
                 const cartToSave = cart.id;
                 const { name, email } = profile._json;
-                const user = await usersService.createUser(name, "", email, null, cartToSave, "");
+                const user = await usersService.createUser(name, "", email, null, cartToSave, "", new Date().toString());
                 done(null, user);
             } else {
                 done(null, user);

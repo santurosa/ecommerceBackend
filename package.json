@@ -1,7 +1,7 @@
 {
-  "name": "desafio_11",
+  "name": "integradora_04",
   "version": "1.0.0",
-  "description": "Decimo primer desafio del curso de Programación Backend",
+  "description": "Cuarta practica integradora del curso de Programación Backend",
   "main": "index.js",
   "scripts": {
     "test": "mocha test",

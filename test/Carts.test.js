@@ -35,7 +35,6 @@ describe('Testing Carts', () => {
             role: 'user_premium'
         }
         await requester.post('/api/sessions/register').send(userMock);
-        await requester.post('/api/sessions/register').send(userMock);
         const { body, headers } = await requester.post('/api/sessions/login').send(userMock);
         const cookieResult = headers['set-cookie'][0];
         cookie = {
@@ -67,6 +66,6 @@ describe('Testing Carts', () => {
     })
     after(async function(){
         await requester.delete(`/api/products/${idProduct}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
-        await requester.delete(`/api/sessions/${idUser}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
+        await requester.delete(`/api/users/${idUser}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
     })
 })

@@ -1,5 +1,5 @@
 import { productsService } from "../repositories/index.js";
-import { mockingProducts } from '../utils.js';
+import { mockingProducts } from '../utils/mocking.js';
 import CustomError from "../service/errors/CustomError.js";
 import EErrors from "../service/errors/enums.js";
 import { createProductErrorInfo, upgrateProductErrorInfo } from "../service/errors/info.js";

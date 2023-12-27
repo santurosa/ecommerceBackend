@@ -29,10 +29,30 @@ const schema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Carts"
     },
+    documents: {
+        type: [
+            {
+                name: String,
+                reference: String,
+                _id: false
+            }
+        ],
+        default: []
+    },
     role: {
         type: String,
         enum: ["admin", "user", "user_premium"],
         default: "user"
+    },
+    last_connection: {
+        type: String,
+        require: true,
+        validate: {
+            validator: function (v) {
+                return !isNaN(Date.parse(v));
+            },
+            message: props => `${props.value} no es una fecha válida.`
+        }
     }
 });
 
