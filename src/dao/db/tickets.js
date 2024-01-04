@@ -7,7 +7,7 @@ import EErrors from "../../service/errors/enums.js";
 import { searchByMongooseIdErrorInfo } from "../../service/errors/info.js";
 
 export default class Tickets {
-    createTicket = async (id, email) => {
+    createTicket = async (id, email, date) => {
         try {
             if (!mongoose.Types.ObjectId.isValid(id)) {
                 CustomError.createError({
@@ -18,10 +18,11 @@ export default class Tickets {
                 })
             }
 
-            const code = Math.floor(Math.random() * 1e10).toString().padStart(10, '0');
-            const date = new Date().toString()
+            const code = await ticketsModel.countDocuments() + 1;
 
-            let productsPrice = [];
+            const productsPrice = [];
+            const productsToTicket = [];
+            const outStock = [];
             let amount = 0;
             const cart = await cartsModel.findOne({ _id: id });
             if (!cart) {
@@ -42,23 +43,43 @@ export default class Tickets {
                 })
             }
             for (let i = 0; i < products.length; i++) {
-                const product = await productsModel.findOne({ _id: products[i].product._id});
+                const product = await productsModel.findOne({ _id: products[i].product._id });
                 if (product.stock > 0) {
                     const toPay = product.price * products[i].quantity;
+                    productsToTicket.push({ product: product._id, quantity: products[i].quantity });
                     productsPrice.push(toPay);
                     await cartsModel.updateOne(
                         { _id: id },
                         { $pull: { products: { product: product._id } } },
                     )
+                    await productsModel.updateOne(
+                        { _id: products[i].product._id },
+                        { $inc: { stock: -products[i].quantity } },
+                    )
                 }
+                if (product.stock === 0) outStock.push({ _id: product._id, title: product.title, quantity: products[i].quantity });
             }
-            if (productsPrice.length < 1) return products;
+            if (productsPrice.length < 1) return { message: 'The purchase could not be completed because no product is in stock.', outStock };
             for (let i = 0; i < productsPrice.length; i++) {
-                amount += productsPrice[i];                
+                amount += productsPrice[i];
             }
 
-            const ticket = await ticketsModel.create({ code: code, purchase_datetime: date, amount, purchaser: email });
-            return ticket;
+            const ticket = await ticketsModel.create({ code, purchase_datetime: date, products: productsToTicket, amount, purchaser: email });
+            return { ticket, outStock };
+        } catch (error) {
+            throw error;
+        }
+    }
+    getTicketsByEmail = async (email) => {
+        try {
+            const tickets = await ticketsModel.find({ purchaser: email }).sort({ purchase_datetime: -1 }).lean();
+            if (!tickets.length > 0) CustomError.createError({
+                name: "Tickets get error",
+                cause: 'The user that has been received does not have tickets in his or her name or does not exist.',
+                message: "Error Getting from this email",
+                code: EErrors.DATABASE_ERROR
+            })
+            return tickets;
         } catch (error) {
             throw error;
         }

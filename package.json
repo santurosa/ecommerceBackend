@@ -1,7 +1,7 @@
 {
-  "name": "integradora_04",
+  "name": "ecommerce-backend",
   "version": "1.0.0",
-  "description": "Cuarta practica integradora del curso de Programación Backend",
+  "description": "Proyecto final del curso de Programación Backend",
   "main": "index.js",
   "scripts": {
     "test": "mocha test",

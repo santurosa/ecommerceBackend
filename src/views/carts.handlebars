@@ -1,13 +1,26 @@
 <h1>Carrito</h1>
 <div>
-    <h2>Producto(s)</h2>
-    {{#each cart.products}}
-    <ul>
-        <li>{{this.product.title}} (Cantidad: {{this.quantity}})</li>
-    </ul>
-    {{/each}}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Unidades</th>
+                <th>Eliminar Producto</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each cart.products}}
+            <tr>
+                <td>{{this.product.title}}</td>
+                <td>${{this.product.price}}</td>
+                <td>{{this.quantity}}</td>
+                <td><button class="deleteProduct" data-url="/api/carts/{{../cart._id}}/product/{{this.product._id}}">Eliminar</button></td>
+            </tr>
+            {{/each}}
+    </table>
 </div>
 <button id="purchaseCart" data-url="/api/carts/{{cart._id}}/purchase">Finalizar Compra</button>
 <a href="/products"><button>Volver a la Tienda</button></a>
 
-<script src="/static/js/cart.js"></script>
+<script src="/static/js/carts.js"></script>

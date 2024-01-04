@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const collection = "Users";
 
@@ -45,19 +46,14 @@ const schema = new mongoose.Schema({
         default: "user"
     },
     last_connection: {
-        type: String,
-        require: true,
-        validate: {
-            validator: function (v) {
-                return !isNaN(Date.parse(v));
-            },
-            message: props => `${props.value} no es una fecha válida.`
-        }
+        type: Date,
+        require: true
     }
 });
 
 schema.pre('findOne', function(){
     this.populate('cart');
 })
+schema.plugin(mongoosePaginate);
 
 export const userModel = mongoose.model(collection, schema);

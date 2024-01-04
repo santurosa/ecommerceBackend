@@ -13,7 +13,6 @@ export default class Users {
             throw error;
         }
     }
-
     getUserById = async (id) => {
         try {
             const user = await userModel.findById(id).lean();
@@ -22,7 +21,33 @@ export default class Users {
             throw error;
         }
     }
-
+    getUsers = async (limit, page) => {
+        try {
+            const { docs, hasPrevPage, hasNextPage, nextPage, prevPage } = await userModel.paginate('', { limit, page });
+            const users = docs.map(user => {
+                const userObject = user.toObject()
+                delete userObject.password
+                delete userObject.__v
+                return userObject;
+            });
+            return { users, hasPrevPage, hasNextPage, nextPage, prevPage };
+        } catch (error) {
+            throw error;
+        }
+    }
+    deleteInactiveUsers = async (limit) => {
+        try {
+            const users = await userModel.find({ last_connection: { $lt: limit } });
+            const usersIds = users.map(user => user._id);
+            const usersEmails = users.map(user => user.email);
+            const carts = users.map(user => user.cart._id);
+            const result = await userModel.deleteMany({ _id: { $in: usersIds } });
+            
+            return { deletedUsers: result.deletedCount, usersEmails, carts };
+        } catch (error) {
+            throw error;
+        }
+    }
     createUser = async (user) => {
         try {
             const creation = await userModel.create(user);
@@ -33,7 +58,7 @@ export default class Users {
         }
     }
 
-    deleteUserById = async (id) => {
+    deleteUser = async (id) => {
         try {
             const result = await userModel.findByIdAndDelete(id);
             return result;

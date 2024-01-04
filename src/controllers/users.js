@@ -1,9 +1,19 @@
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
-import { productsService, usersService } from "../repositories/index.js";
+import { cartsService, productsService, usersService } from "../repositories/index.js";
 import CustomError from "../service/errors/CustomError.js";
 import EErrors from "../service/errors/enums.js";
 import MailingService from "../service/maling/mailing.js";
+
+export const getUsers = async (req, res, next) => {
+    try {
+        const { limit = 10, page = 1 } = req.query;
+        const { users, hasPrevPage, hasNextPage, nextPage, prevPage } = await usersService.getUsers(limit, page);
+        res.send({ status: "success", payload: users, hasPrevPage, hasNextPage, nextPage, prevPage });
+    } catch (error) {
+        next(error);
+    }
+}
 
 export const recoverPassword = async (req, res, next) => {
     try {
@@ -17,7 +27,7 @@ export const recoverPassword = async (req, res, next) => {
         })
         const token = jwt.sign({ email }, config.jwtSecret, { expiresIn: '1h' });
         const mailer = new MailingService();
-        const result = mailer.sendSimpleMail({
+        mailer.sendSimpleMail({
             from: 'E-Commerce <santurosa999@gmail.com>',
             to: email,
             subject: 'Restablecer contraseña',
@@ -63,17 +73,38 @@ export const updateRole = async (req, res, next) => {
             message: "Error updating User's role by ID",
             code: EErrors.INVALID_TYPE_ERROR
         })
-        res.send({ status: "success", message: `The user's role has been successfully changed to ${result}` });
+        res.send({ status: "success", message: `The user's role has been successfully changed`, new_role: result });
     } catch (error) {
         next(error);
     }
 }
 
-export const deleteUserById = async (req, res, next) => {
+export const deleteUser = async (req, res, next) => {
     try {
         const id = req.params.uid;
-        const result = await usersService.deleteUserById(id);
-        res.send({ status: "success", payload: result });
+        const user = await usersService.deleteUser(id);
+        await cartsService.deleteCart(user.cart._id);
+        res.send({ status: "success", payload: user });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const deleteInactiveUsers = async (req, res, next) => {
+    try {
+        const result = await usersService.deleteInactiveUsers();
+        await cartsService.deleteCarts(result.carts);
+        const users = result.usersEmails;
+        if (users > 0) {
+            const mailer = new MailingService();
+            mailer.sendSimpleMail({
+                from: 'E-Commerce <santurosa999@gmail.com>',
+                to: users,
+                subject: 'Eliminación de su cuenta por falta de actividad',
+                html: `<p>¡Hola! Lamentamos informarte que hemos eliminado su cuenta debido a la falta de actividad reciente. Si deseas volver, simplemente regístrese nuevamente.</p>`
+            })
+        }
+        res.send({ status: "success", message: `${result.deletedUsers} inactive users have been deleted` });
     } catch (error) {
         next(error);
     }

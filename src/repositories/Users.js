@@ -1,7 +1,7 @@
 import UserDTO from "../dto/user.js";
 import { createHash } from "../utils.js";
 
-export default class UserssRepository {
+export default class UsersRepository {
     constructor(dao) {
         this.dao = dao
     }
@@ -13,19 +13,23 @@ export default class UserssRepository {
         const user = await this.dao.getUserById(id);
         return user;
     }
+    getUsers = async (limit, page) => {
+        const result = await this.dao.getUsers(limit, page);
+        return result;
+    }
     createUser = async (first_name, last_name, email, age, password, cart, documents, role) => {
         try {
-            const last_connection = new Date().toString();            
-            const newUser = new UserDTO({ first_name, last_name, email, age, password: createHash(password), cart, documents, role, last_connection });
-            const result = await this.dao.createUser(newUser);
+            const last_connection = new Date();
+            const user = new UserDTO({ first_name, last_name, email, age, password: createHash(password), cart, documents, role, last_connection });
+            const result = await this.dao.createUser(user);
             return result;
         } catch (error) {
             throw error;
         }
     }
-    deleteUserById = async (id) => {
+    deleteUser = async (id) => {
         try {
-            const result = await this.dao.deleteUserById(id);
+            const result = await this.dao.deleteUser(id);
             return result;
         } catch (error) {
             throw error;
@@ -49,7 +53,7 @@ export default class UserssRepository {
     }
     updateConnection = async (id) =>  {
         try {
-            const date = new Date().toString();
+            const date = new Date();
             const result = await this.dao.updateConnection(id, date);
             return result;
         } catch (error) {
@@ -59,6 +63,16 @@ export default class UserssRepository {
     updateDocuments = async (id, name, reference) =>  {
         try {
             const result = await this.dao.updateDocuments(id, name, reference);
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+    deleteInactiveUsers = async () => {
+        try {
+            const limit = new Date(Date.now() - (48 * 60 * 60 * 1000));
+            console.log(limit)
+            const result = await this.dao.deleteInactiveUsers(limit);
             return result;
         } catch (error) {
             throw error;

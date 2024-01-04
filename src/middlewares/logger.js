@@ -45,7 +45,7 @@ const loggingConfig = {
     ]
 }
 
-const addLogger = (req, res, next) => {
+export const addLogger = (req, res, next) => {
     req.logger = winston.createLogger({
         levels: customLevelsOptions.levels,
         transports: loggingConfig[config.env]
@@ -54,4 +54,7 @@ const addLogger = (req, res, next) => {
     next();
 }
 
-export default addLogger;
+export const logger = winston.createLogger({
+    levels: customLevelsOptions.levels,
+    transports: loggingConfig[config.env]
+})

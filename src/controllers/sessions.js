@@ -7,7 +7,7 @@ import EErrors from "../service/errors/enums.js";
 export const login = async (req, res) => {
     try {
         if (!req.user) return res.status(400).send({ status: "error", error: "Credenciales incorrectas" });
-        await usersService.updateConnection(req.user._id);
+        if(req.user.email != config.adminName) await usersService.updateConnection(req.user._id);
         const user = {
             _id: req.user._id,
             name: `${req.user.first_name} ${req.user.last_name}`,
@@ -39,7 +39,7 @@ export const failRegister = (req, res) => {
 
 export const logout = async (req, res) => {
     try {
-        await usersService.updateConnection(req.user._id);
+        if(req.user.email != config.adminName) await usersService.updateConnection(req.user._id);
         res.cookie('token', '', { expires: new Date(0), httpOnly: true }).redirect('/login');
     } catch (error) {
         throw error;
@@ -47,10 +47,17 @@ export const logout = async (req, res) => {
 }
 
 export const githubcallback = async (req, res) => {
-    const user = req.user;
-    delete user.password;
-    req.user = user;
-    res.redirect("/products");
+    const user = {
+        _id: req.user._id,
+        name: `${req.user.first_name} ${req.user.last_name}`,
+        email: req.user.email,
+        age: req.user.age,
+        cart: req.user.cart,
+        documents: req.user.documents,
+        role: req.user.role
+    }
+    const token = jwt.sign(user, config.jwtSecret, { expiresIn: '1h' });
+    res.cookie('token', token, { httpOnly: true, maxAge: 60 * 60 * 1000 }).redirect("/products");
 }
 
 export const current = (req, res) => {

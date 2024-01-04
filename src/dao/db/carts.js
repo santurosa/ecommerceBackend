@@ -180,20 +180,18 @@ export default class Carts {
         }
     }
 
-    deleteCart = async (id) => {
+    emptyCart = async (id) => {
         try {
             const result = await cartsModel.updateOne(
-                {_id: id },
+                { _id: id },
                 { $set: { products: [] } }
             );
-            if (result.matchedCount === 0) {
-                CustomError.createError({
-                    name: "Cart get error",
-                    cause: searchByMongooseIdErrorInfo(id),
-                    message: "Error Getting Cart by ID",
-                    code: EErrors.DATABASE_ERROR
-                })
-            }
+            if (result.matchedCount === 0) CustomError.createError({
+                name: "Cart get error",
+                cause: searchByMongooseIdErrorInfo(id),
+                message: "Error Getting Cart by ID",
+                code: EErrors.DATABASE_ERROR
+            })
             return result;
         } catch (error) {
             throw error;
@@ -242,6 +240,40 @@ export default class Carts {
             return result;
         } catch (error) {
             throw error
+        }
+    }
+    deleteCart = async (id) => {
+        try {
+            if (!mongoose.Types.ObjectId.isValid(id)) CustomError.createError({
+                name: "Cart get error",
+                cause: getByMongooseIdErrorInfo(id),
+                message: "Error Getting Cart by ID",
+                code: EErrors.INVALID_TYPE_ERROR
+            })
+            const result = await cartsModel.findByIdAndDelete(id);
+            if (!result) CustomError.createError({
+                name: "Cart get error",
+                cause: searchByMongooseIdErrorInfo(id),
+                message: "Error Getting Cart by ID",
+                code: EErrors.DATABASE_ERROR
+            })
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+    deleteCarts = async (carts) => {
+        try {
+            if (!Array.isArray(carts)) CustomError.createError({
+                name: "Carts get error",
+                cause: `An array was expected with the ids of the carts to be deleted and was received ${carts}`,
+                message: "Error Getting array with Carts",
+                code: EErrors.INVALID_TYPE_ERROR
+            })
+            const result = await cartsModel.deleteMany({ _id: { $in: carts } });
+            return result;
+        } catch (error) {
+            throw error;
         }
     }
 }

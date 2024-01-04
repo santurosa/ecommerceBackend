@@ -8,6 +8,6 @@ export default class UserDTO {
             this.cart = user.cart,
             this.documents = !user.documents ? user.documents : [],
             this.role = user.role === "admin" || user.role === "user" ||  user.role === "user_premium" ? user.role : "user",
-            this.last_connection = user.last_connection.trim()
+            this.last_connection = user.last_connection
     }
 }

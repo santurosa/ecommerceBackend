@@ -1,0 +1,29 @@
+<h1>Mis Tickets</h1>
+<hr style="border: 0.2px solid black;">
+<div>
+    {{#each tickets}}
+    <div>
+        <h3>Número de orden: #{{this.code}}</h3>
+        <p>Orden realizada el {{this.purchase_datetime}}</p>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Unidades</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each this.products}}
+                <tr>
+                    <td>{{this.product.title}}</td>
+                    <td>${{this.product.price}}</td>
+                    <td>{{this.quantity}}</td>
+                </tr>
+                {{/each}}
+        </table>
+        <p>Total: ${{this.amount}}</p>
+        <hr style="border: 0.2px solid black;">
+    </div>
+    {{/each}}
+<a href="/products"><button>Volver a la Tienda</button></a>

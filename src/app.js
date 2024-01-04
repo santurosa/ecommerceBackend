@@ -13,7 +13,7 @@ import initializePassport from "./config/passport.js";
 import config from "./config/config.js"
 import __dirname from "./utils.js";
 import errorHandler from './middlewares/errors.js';
-import addLogger from "./middlewares/logger.js";
+import { addLogger, logger } from "./middlewares/logger.js";
 import { applyPolicy } from "./middlewares/auth.js";
 
 import productsRouter from "./routes/products.js";
@@ -76,7 +76,7 @@ app.use("/api/loggerTest", loggerRouter);
 app.use(errorHandler);
 
 const server = app.listen(port, () => {
-    console.log("Server on PORT " + port);
+    logger.debug("Server on PORT " + port);
 })
 
 const io = new Server(server)
@@ -84,7 +84,7 @@ const io = new Server(server)
 let messages = [];
 
 io.on('connection', socket => {
-    console.log('Nuevo cliente conectado');
+    logger.info('Nuevo cliente conectado');
 
     socket.on('message', data => {
         messages.push(data);

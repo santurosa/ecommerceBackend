@@ -3,7 +3,12 @@
 <p>Correo electronico: {{user.email}}</p>
 <p>Edad: {{user.age}}</p>
 <p>Rol: {{user.role}}</p>
+{{#if user.age}}
 <a href="/carts/{{user.cart._id}}"><button>Carrito</button></a>
+<a href="/tickets"><button>Mis Tickets</button></a>
+{{else}}
+<a href="/users"><button>Panel de usuarios</button></a>
+{{/if}}
 <a href="/api/sessions/logout"><button>Cerrar sesión</button></a>
 <h1>Productos</h1>
 <div>
@@ -14,7 +19,10 @@
         <p>{{this.description}}</p>
         <p>$ {{this.price}}</p>
         <p>{{this.stock}} disponible(s)</p>
-        <img src={{this.thumbnail}} alt={{this.title}}>
+        <p>Vendido por {{this.owner}}</p>
+        {{#each this.thumbnail}}
+        <img src="{{this}}" alt="{{../this.title}}">
+        {{/each}}
         <br>
         <button class="addToCart" data-url="/api/carts/{{../user.cart._id}}/product/{{this._id}}">Agregar al Carrito</button>
     </div>

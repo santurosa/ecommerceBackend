@@ -1,8 +1,10 @@
-import { productsService } from "../repositories/index.js";
+import { productsService, usersService } from "../repositories/index.js";
 import { mockingProducts } from '../utils/mocking.js';
 import CustomError from "../service/errors/CustomError.js";
 import EErrors from "../service/errors/enums.js";
 import { createProductErrorInfo, upgrateProductErrorInfo } from "../service/errors/info.js";
+import config from "../config/config.js";
+import MailingService from "../service/maling/mailing.js";
 
 
 export const getProducts = async (req, res) => {
@@ -60,7 +62,6 @@ export const upgrateProduct = async (req, res, next) => {
         const result = await productsService.upgrateProduct(req.user.email, id, upgrate);
         res.send({ status: "success", payload: result });
     } catch (error) {
-        console.log(req.user)
         next(error);
     }
 }
@@ -68,7 +69,28 @@ export const upgrateProduct = async (req, res, next) => {
 export const deleteProduct = async (req, res, next) => {
     try {
         const id = req.params.pid;
-        const result = await productsService.deleteProduct(req.user.email, id);
+        const email = req.user.email;
+        const result = await productsService.deleteProduct(email, id);
+        
+        const user = await usersService.getUserByEmail(email);
+        if (email != config.adminName && user.role === 'user_premium') {
+            const mailer = new MailingService();
+            mailer.sendSimpleMail({
+                from: 'E-Commerce <santurosa999@gmail.com>',
+                to: email,
+                subject: 'Eliminación de producto a su nombre',
+                html: `<div>
+                            <p>¡Hola! Ha sido eliminado el siguiente producto a su nombre del ecommerce:</p>
+                            <div>
+                                <h1>${result.title}</h1>
+                                <p>Categoría: ${result.category}</p>
+                                <p>${result.description}</p>
+                                <p>$ ${result.price}</p>
+                                <p>${result.stock} disponible(s)</p>
+                            </div>
+                        </div>`
+            })
+        }
         res.send({ status: "success", payload: result });
     } catch (error) {
         next(error);

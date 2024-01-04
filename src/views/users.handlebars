@@ -1,0 +1,45 @@
+<h1>Usuarios</h1>
+<a href="/products"><button>Volver a la Tienda</button></a>
+<br><br>
+<button id="deleteUsers">Eliminar usuarios inactivos</button>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Correo Electronico</th>
+            <th>Edad</th>
+            <th>Documentos</th>
+            <th>Rol</th>
+            <th>Última Conexión</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each users}}
+        <tr>
+            <td>{{this.first_name}}</td>
+            <td>{{this.last_name}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.age}}</td>
+            <td>{{this.documents}}</td>
+            <td>{{this.role}}</td>
+            <td>{{this.last_connection}}</td>
+            <td>
+                <a href="/carts/{{this.cart}}"><button>Ver Carrito</button></a>
+                <button class="updateRole" data-url="/api/users/premium/{{this._id}}">Actualizar Rol</button></a>
+                <button class="deleteUser" data-url="/api/users/{{this._id}}">Eliminar usuario</button></a>
+            </td>
+        </tr>
+        {{/each}}
+</table>
+
+{{#if hasPrevPage}}
+<a href="/users?page={{prevPage}}&limit={{limit}}"><button>Anterior</button></a>
+{{/if}}
+
+{{#if hasNextPage}}
+<a href="/users?page={{nextPage}}&limit={{limit}}"><button>Siguiente</button></a>
+{{/if}}
+
+<script src="/static/js/users.js"></script>

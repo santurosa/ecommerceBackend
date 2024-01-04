@@ -6,6 +6,7 @@ export const viewAccess = (access) => {
             if (user) req.user = user;
             if (access === 'PUBLIC' && req.user) return res.redirect("/products");
             if (access === 'PRIVATE' && !req.user) return res.redirect("/login");
+            if (access === 'ADMIN' && (!req.user || req.user.role != 'admin')) return res.redirect("/login");
             next();
         })(req, res, next)
     }

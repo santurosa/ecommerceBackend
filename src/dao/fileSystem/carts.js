@@ -76,7 +76,7 @@ export default class Carts {
         }
     }
 
-    deleteCart = async (idCart) => {
+    emptyCart = async (idCart) => {
         try {
             const result = await cartsModel.findByIdAndUpdate(
                 idCart,

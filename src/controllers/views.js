@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 import CustomError from "../service/errors/CustomError.js";
 import EErrors from "../service/errors/enums.js";
-import { productsService, cartsService } from "../repositories/index.js";
+import { productsService, cartsService, usersService, ticketsService } from "../repositories/index.js";
 
 export const loginView = (req, res) => {
     res.render("login");
@@ -24,6 +24,26 @@ export const cartsView = async (req, res, next) => {
         const cid = req.params.cid
         const cart = await cartsService.getCart(cid);
         res.render("carts", { cart });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const usersView = async (req, res, next) => {
+    try {
+        const { limit = 10, page = 1 } = req.query;
+        const { users, hasPrevPage, hasNextPage, nextPage, prevPage } = await usersService.getUsers(limit, page);
+        res.render("users", { users, hasPrevPage, hasNextPage, nextPage, prevPage, limit });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const ticketsView = async (req, res, next) => {
+    try {
+        const email = req.user.email;
+        const tickets = await ticketsService.getTicketsByEmail(email);
+        res.render("tickets", { tickets });
     } catch (error) {
         next(error);
     }

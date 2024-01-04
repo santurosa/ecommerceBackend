@@ -1,5 +1,6 @@
 import mailer from 'nodemailer'
 import config from '../../config/config.js'
+import { logger } from '../../middlewares/logger.js'
 
 export default class MailingService {
     constructor() {
@@ -14,14 +15,14 @@ export default class MailingService {
     }
 
     sendSimpleMail = async ({ from, to, subject, html, attachments = [] }) => {
-        let result = await this.client.sendMail({
+        const result = await this.client.sendMail({
             from,
             to,
             subject,
             html,
             attachments
         });
-        console.log(result);
+        logger.info(`Email successfully sent from to ${result.envelope.from} to ${result.envelope.to}`);
         return result;
     }
 }

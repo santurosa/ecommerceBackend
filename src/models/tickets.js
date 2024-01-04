@@ -9,14 +9,21 @@ const schema = new mongoose.Schema({
         unique: true
     },
     purchase_datetime: {
-        type: String,
-        require: true,
-        validate: {
-            validator: function (v) {
-                return !isNaN(Date.parse(v));
-            },
-            message: props => `${props.value} no es una fecha válida.`
-        }
+        type: Date,
+        require: true
+    },
+    products: {
+        type: [
+            {
+                product: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Products",
+                },
+                quantity: Number,
+                _id: false
+            }
+        ],
+        require: true
     },
     amount: {
         type: Number,
@@ -27,6 +34,10 @@ const schema = new mongoose.Schema({
         require: true,
         match: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
     }
+})
+
+schema.pre("find", function(){
+    this.populate("products.product");
 })
 
 export const ticketsModel = mongoose.model(collection, schema);

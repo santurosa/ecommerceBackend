@@ -66,10 +66,10 @@ export const updateQuantityProducts = async (req, res, next) => {
     }
 }
 
-export const deleteCart = async (req, res, next) => {
+export const emptyCart = async (req, res, next) => {
     try {
         const cid = req.params.cid;
-        const result = await cartsService.deleteCart(cid);
+        const result = await cartsService.emptyCart(cid);
         res.send({ status: "success", payload: result });
     } catch (error) {
         next(error);
@@ -93,6 +93,16 @@ export const purchase = async (req, res, next) => {
         const email = req.user.email;
         const result = await ticketsService.createTicket(cid, email);
         res.send({ status: "success", payload: result });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getTicketsByEmail = async (req, res, next) => {
+    try {
+        const email = req.user.email;
+        const tickets = await ticketsService.getTicketsByEmail(email);
+        res.send({ status: "success", tickets });
     } catch (error) {
         next(error);
     }

@@ -42,9 +42,7 @@ const initializePassport = () => {
                 return done(null, user);
             }
             const user = await usersService.getUserByEmail(username);
-            if (!user) {
-                return done(null, false, { message: "User doesn't exist" });
-            }
+            if (!user) return done(null, false, { message: "User doesn't exist" });
             if (!isValidPassword(user, password)) return done(null, false);
             return done(null, user);
         } catch (error) {
@@ -57,12 +55,13 @@ const initializePassport = () => {
         callbackURL: "http://localhost:8080/api/sessions/githubcallback"
     }, async (accessToken, refreshToken, profile, done) => {
         try {
-            const user = await usersService.getUserByEmail(profile._json.email);
+            const email = !profile._json.email ? `${profile._json.login}@github.register.com` : profile._json.email;
+            const user = await usersService.getUserByEmail(email);
             if (!user) {
                 const cart = await cartsService.createCart();
                 const cartToSave = cart.id;
-                const { name, email } = profile._json;
-                const user = await usersService.createUser(name, "", email, null, cartToSave, "", new Date().toString());
+                const name = profile._json.login;
+                const user = await usersService.createUser(name, "", email, 99, "", cartToSave, []);
                 done(null, user);
             } else {
                 done(null, user);
