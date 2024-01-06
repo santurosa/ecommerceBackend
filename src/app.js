@@ -25,9 +25,9 @@ import userRouter from "./routes/users.js";
 import loggerRouter from './routes/logger.js';
 
 const app = express();
-const port = config.port || 3000;
-const urlMongo = config.mongoUrl;
-const jwtSecret = config.jwtSecret;
+const port = config.environment.PORT || 3000;
+const urlMongo = config.environment.MONGO_URL;
+const jwtSecret = config.jwt.JWT_SECRET;
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));

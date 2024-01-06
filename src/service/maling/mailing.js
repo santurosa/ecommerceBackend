@@ -5,11 +5,11 @@ import { logger } from '../../middlewares/logger.js'
 export default class MailingService {
     constructor() {
         this.client = mailer.createTransport({
-            service: config.mailingService,
+            service: config.mailing.SERVICE,
             port: 587,
             auth: {
-                user: config.mailingUser,
-                pass: config.mailingPassword
+                user: config.mailing.USER,
+                pass: config.mailing.PASSWORD
             }
         })
     }

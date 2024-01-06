@@ -4,13 +4,13 @@ import mongoose from "mongoose";
 import config from "../src/config/config.js";
 
 const expect = chai.expect;
-const port = config.port || 3000;
+const port = config.environment.PORT || 3000;
 const requester = supertest(`http://localhost:${port}`);
 let idUser;
 let idProduct;
 let id;
 let cookie;
-const productMock = {
+const productMock = [{
     title: "Bicicleta",
     description: "Increible Plástico Silla",
     price: 170,
@@ -22,7 +22,7 @@ const productMock = {
         "https://picsum.photos/seed/y3gBjr2/640/480",
         "https://loremflickr.com/640/480?lock=1404954986151936"
     ]
-}
+}]
 
 describe('Testing Carts', () => {
     before(async function(){
@@ -42,9 +42,11 @@ describe('Testing Carts', () => {
             value: cookieResult.split('=')[1]
         }
         const requestProduct = await requester.post('/api/products').send(productMock).set('Cookie', [`${cookie.name}=${cookie.value}`]);
+        const productBody = requestProduct.body;
+        const product = productBody.payload[0];
+        idProduct = product._id;
         idUser = body.user._id;
         id = body.user.cart._id;
-        idProduct = requestProduct.body.payload._id;
     })
     beforeEach(function(){
         this.timeout(5000);

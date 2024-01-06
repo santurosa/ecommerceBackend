@@ -8,12 +8,13 @@ export let Products;
 export let Users;
 export let Tickets;
 
-switch (config.persistence) {
+switch (config.environment.PERSISTENCE) {
     case 'MONGO':
-        const connection = mongoose.connect(config.mongoUrl, {
+        const connection = mongoose.connect(config.environment.MONGO_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
+        if(connection) logger.debug('Connection to Mongo database successfully completed');
         const { default: CartsMongo } = await import("./db/carts.js");
         Carts = CartsMongo;
         const { default: MessagesMongo } = await import("./db/messages.js");

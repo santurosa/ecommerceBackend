@@ -79,7 +79,7 @@ export const deleteProduct = async (req, res, next) => {
         const result = await productsService.deleteProduct(email, id);
 
         const user = await usersService.getUserByEmail(email);
-        if (email != config.adminName && user.role === 'user_premium') {
+        if (email != config.admin.NAME && user.role === 'user_premium') {
             const mailer = new MailingService();
             mailer.sendSimpleMail({
                 from: 'E-Commerce <santurosa999@gmail.com>',

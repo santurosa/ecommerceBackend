@@ -69,7 +69,7 @@ export default class Products {
                 message: "Error Deleting Product by ID",
                 code: EErrors.INVALID_TYPE_ERROR
             })
-            if (email === product.owner || email === config.adminName) {
+            if (email === product.owner || email === config.admin.NAME) {
                 const result = await productsModel.findByIdAndDelete(id);
                 return result;
             } else CustomError.createError({
@@ -100,7 +100,7 @@ export default class Products {
                 message: "Error updating Product by ID",
                 code: EErrors.INVALID_TYPE_ERROR
             })
-            if (email === product.owner || email === config.adminName) {
+            if (email === product.owner || email === config.admin.NAME) {
                 const result = await productsModel.updateOne({ _id: id }, upgrate);
                 return result;
             } else CustomError.createError({
@@ -131,7 +131,7 @@ export default class Products {
                 message: "Error updating Product by ID",
                 code: EErrors.INVALID_TYPE_ERROR
             })
-            if (email === product.owner || email === config.adminName) {
+            if (email === product.owner || email === config.admin.NAME) {
                 if (product.thumbnail[0] === "Sin imagenes") {
                     const result = await productsModel.updateOne({ _id: id }, { $set: { thumbnail } });
                     return result;

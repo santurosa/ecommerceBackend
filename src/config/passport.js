@@ -13,9 +13,9 @@ const admin = {
     _id: "123",
     first_name: "Admin",
     last_name: "Coder",
-    email: config.adminName,
+    email: config.admin.NAME,
     age: null,
-    password: config.adminPassword,
+    password: config.admin.PASSWORD,
     role: "admin"
 }
 
@@ -73,7 +73,7 @@ const initializePassport = () => {
 
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
-        secretOrKey: config.jwtSecret
+        secretOrKey: config.jwt.JWT_SECRET
     }, async (jwt_payload, done) => {
         try {
             return done(null, jwt_payload);

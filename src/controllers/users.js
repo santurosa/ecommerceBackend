@@ -26,7 +26,7 @@ export const recoverPassword = async (req, res, next) => {
             message: "Error trying update User's password",
             code: EErrors.INVALID_PARAMS_ERROR
         })
-        const token = jwt.sign({ email }, config.jwtSecret, { expiresIn: '1h' });
+        const token = jwt.sign({ email }, config.jwt.JWT_SECRET, { expiresIn: '1h' });
         const mailer = new MailingService();
         mailer.sendSimpleMail({
             from: 'E-Commerce <santurosa999@gmail.com>',

@@ -48,7 +48,7 @@ const loggingConfig = {
 export const addLogger = (req, res, next) => {
     req.logger = winston.createLogger({
         levels: customLevelsOptions.levels,
-        transports: loggingConfig[config.env]
+        transports: loggingConfig[config.environment.ENV]
     })
     req.logger.http(`${req.method} at ${req.url} - ${new Date().toString()} `);
     next();
@@ -56,5 +56,5 @@ export const addLogger = (req, res, next) => {
 
 export const logger = winston.createLogger({
     levels: customLevelsOptions.levels,
-    transports: loggingConfig[config.env]
+    transports: loggingConfig[config.environment.ENV]
 })

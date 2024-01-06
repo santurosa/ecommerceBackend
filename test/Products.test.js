@@ -3,7 +3,7 @@ import supertest from "supertest";
 import config from "../src/config/config.js";
 
 const expect = chai.expect;
-const port = config.port || 3000;
+const port = config.environment.PORT || 3000;
 const requester = supertest(`http://localhost:${port}`);
 let idUser;
 let id;

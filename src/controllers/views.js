@@ -60,7 +60,7 @@ export const recoverPasswordView = (req, res) => {
 export const restartPasswordView = (req, res) => {
     const token = req.params.token;
     let email;
-    jwt.verify(token, config.jwtSecret, (err, credentials) => {
+    jwt.verify(token, config.jwt.JWT_SECRET, (err, credentials) => {
         if (err) return res.status(401).json({ error: 'Token no valido' });
         if (!token) {
             CustomError.createError({
