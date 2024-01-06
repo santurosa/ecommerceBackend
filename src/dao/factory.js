@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import config from "../config/config.js";
+import { logger } from "../middlewares/logger.js";
 
 export let Carts;
 export let Messages;
@@ -37,6 +38,6 @@ switch (config.persistence) {
         Tickets = TicketsFile;
         break;
     default:
-        console.log('No se ha encontrado una persistencia con ese nombre');
+        logger.warn('No se ha encontrado una persistencia con ese nombre');
         break;
 }

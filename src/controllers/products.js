@@ -29,18 +29,26 @@ export const getProductById = async (req, res, next) => {
 }
 
 export const createProducts = async (req, res, next) => {
-    const { title, description, price, status, stock, category, thumbnail } = req.body;
-    try {        
-        if (!title || !description || !price || !stock || !category) {
-            CustomError.createError({
+    const products = req.body;
+    const { email } = req.user;
+    try {
+        if (!products) CustomError.createError({
+            name: "Product creation error",
+            cause: createProductErrorInfo(products),
+            message: "Error Trying to create Product",
+            code: EErrors.INVALID_TYPE_ERROR
+        })
+        for (let i = 0; i < products.length; i++) {
+            const { title, description, price, status, stock, category, thumbnail } = products[i];
+            if (!title || !description || !price || !stock || !category) CustomError.createError({
                 name: "Product creation error",
                 cause: createProductErrorInfo({ title, description, price, status, stock, category, thumbnail }),
                 message: "Error Trying to create Product",
                 code: EErrors.INVALID_TYPE_ERROR
             })
+            products[i].owner = email;
         }
-        const product = { title, description, price, status, stock, category, thumbnail, owner: req.user.email };
-        const result = await productsService.createProducts(product);
+        const result = await productsService.createProducts(products);
         res.send({ status: "success", payload: result });
     } catch (error) {
         next(error);
@@ -51,14 +59,12 @@ export const upgrateProduct = async (req, res, next) => {
     try {
         const id = req.params.pid;
         const upgrate = req.body;
-        if (!upgrate) {
-            CustomError.createError({
+        if (!upgrate) CustomError.createError({
                 name: "Product upgrate error",
                 cause: upgrateProductErrorInfo(),
                 message: "Error Trying to upgrate Product",
                 code: EErrors.INVALID_TYPE_ERROR
             })
-        }
         const result = await productsService.upgrateProduct(req.user.email, id, upgrate);
         res.send({ status: "success", payload: result });
     } catch (error) {
@@ -71,7 +77,7 @@ export const deleteProduct = async (req, res, next) => {
         const id = req.params.pid;
         const email = req.user.email;
         const result = await productsService.deleteProduct(email, id);
-        
+
         const user = await usersService.getUserByEmail(email);
         if (email != config.adminName && user.role === 'user_premium') {
             const mailer = new MailingService();

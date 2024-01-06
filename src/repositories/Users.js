@@ -71,7 +71,6 @@ export default class UsersRepository {
     deleteInactiveUsers = async () => {
         try {
             const limit = new Date(Date.now() - (48 * 60 * 60 * 1000));
-            console.log(limit)
             const result = await this.dao.deleteInactiveUsers(limit);
             return result;
         } catch (error) {

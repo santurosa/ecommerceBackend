@@ -12,9 +12,11 @@ export default class ProductsRepository {
         const product = await this.dao.getProductById(id);
         return product;
     }
-    createProducts = async (product) => {
-        const productToInsert = new ProductDTO(product);
-        const result = await this.dao.createProducts(productToInsert);
+    createProducts = async (products) => {
+        for (let i = 0; i < products.length; i++) {
+            products[i] = new ProductDTO(products[i]);
+        }
+        const result = await this.dao.createProducts(products);
         return result;
     }
     upgrateProduct = async (email, id, product) => {

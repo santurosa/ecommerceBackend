@@ -8,7 +8,7 @@ const requester = supertest(`http://localhost:${port}`);
 let idUser;
 let id;
 let cookie;
-const productMock = {
+const productMock = [{
     title: "Bicicleta",
     description: "Increible Plástico Silla",
     price: 170,
@@ -20,7 +20,7 @@ const productMock = {
         "https://picsum.photos/seed/y3gBjr2/640/480",
         "https://loremflickr.com/640/480?lock=1404954986151936"
     ]
-}
+}]
 
 describe('Testing Products', () => {
     before(async function(){
@@ -47,12 +47,13 @@ describe('Testing Products', () => {
     })
     it('El metodo POST "/api/products" debe crear un producto correctamente', async function(){
         const { body } = await requester.post('/api/products').send(productMock).set('Cookie', [`${cookie.name}=${cookie.value}`]);
-        expect(body.payload).to.have.property('_id');
-        id = body.payload._id;
+        expect(body.payload[0]).to.have.property('_id');
+        const product = body.payload[0];
+        id = product._id;
     })
     it('El metodo GET "/api/products/:pid" debe obtener el producto correctamente mediante su ID', async function(){
         const { body } = await requester.get(`/api/products/${id}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
-        expect(body.payload.title).to.be.eqls(productMock.title);
+        expect(body.payload.title).to.be.eqls(productMock[0].title);
     })
     it('El metodo PUT "/api/products/:pid" debe actualizar el producto correctamente mediante su ID', async function(){
         const updateMock = { description: 'Bicicleta para adultos con cambios' };

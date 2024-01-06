@@ -34,20 +34,20 @@ export default class Products {
             })
             const result = await productsModel.findById(id);
             if (!result) CustomError.createError({
-                    name: "Product get error",
-                    cause: searchByMongooseIdErrorInfo(id),
-                    message: "Error Getting Product by ID",
-                    code: EErrors.DATABASE_ERROR
-                })
+                name: "Product get error",
+                cause: searchByMongooseIdErrorInfo(id),
+                message: "Error Getting Product by ID",
+                code: EErrors.DATABASE_ERROR
+            })
             return result;
         } catch (error) {
             throw error;
         }
     }
 
-    createProducts = async (product) => {
+    createProducts = async (products) => {
         try {
-            const result = await productsModel.create(product);
+            const result = await productsModel.create(products);
             return result;
         } catch (error) {
             throw error;
@@ -57,11 +57,11 @@ export default class Products {
     deleteProduct = async (email, id) => {
         try {
             if (!mongoose.Types.ObjectId.isValid(id)) CustomError.createError({
-                    name: "Product delete error",
-                    cause: getByMongooseIdErrorInfo(id),
-                    message: "Error Deleting Product by ID",
-                    code: EErrors.INVALID_TYPE_ERROR
-                })
+                name: "Product delete error",
+                cause: getByMongooseIdErrorInfo(id),
+                message: "Error Deleting Product by ID",
+                code: EErrors.INVALID_TYPE_ERROR
+            })
             const product = await productsModel.findById(id);
             if (!product) CustomError.createError({
                 name: "Product delete error",

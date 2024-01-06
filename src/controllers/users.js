@@ -18,6 +18,7 @@ export const getUsers = async (req, res, next) => {
 export const recoverPassword = async (req, res, next) => {
     try {
         const { email } = req.query;
+        const domain = `${req.protocol}://${req.get('host')}`;
         const isUser = await usersService.getUserByEmail(email);
         if (!isUser) CustomError.createError({
             name: "User trying update error",
@@ -32,7 +33,7 @@ export const recoverPassword = async (req, res, next) => {
             to: email,
             subject: 'Restablecer contraseña',
             html: `<div><p> ¡Hola! Haz pedido cambiar tu contraseña de usuario. Hace click en el botón de abajo para cambiarla </p>
-            <a href="http://localhost:8080/restartpassword/${token}">Restablecer contraseña</a><div>`
+            <a href="${domain}/restartpassword/${token}">Restablecer contraseña</a><div>`
         })
         res.cookie('recoverPassword', token, { httpOnly: true, maxAge: 60 * 60 * 1000 }).send({ status: "success", message: `We will send you an email to ${email} so you can change your password` });
     } catch (error) {
