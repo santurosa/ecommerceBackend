@@ -25,7 +25,9 @@
         <img src="{{this}}" alt="{{../this.title}}">
         {{/each}}
         <br>
+        {{#if user.age}}
         <button class="addToCart" data-url="/api/carts/{{../user.cart._id}}/product/{{this._id}}">Agregar al Carrito</button>
+        {{/if}}
     </div>
     {{/each}}
     {{#if hasPrevPage}}
