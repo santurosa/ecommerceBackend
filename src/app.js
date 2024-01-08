@@ -1,6 +1,6 @@
 import express from "express";
 import handlebars from "express-handlebars";
-import { Server } from "socket.io";
+import initializeSocketIO from "./socket.io.js";
 import MongoStore from "connect-mongo";
 import session from "express-session";
 import cookieParser from 'cookie-parser';
@@ -76,19 +76,4 @@ const server = app.listen(port, () => {
     logger.debug("Server on PORT " + port);
 })
 
-const io = new Server(server)
-
-let messages = [];
-
-io.on('connection', socket => {
-    logger.info('Nuevo cliente conectado');
-
-    socket.on('message', data => {
-        messages.push(data);
-        io.emit('messageLogs', messages);
-    })
-
-    socket.on('authenticated', data => {
-        socket.broadcast.emit('newUserConnected', data);
-    })
-})
+initializeSocketIO(server);

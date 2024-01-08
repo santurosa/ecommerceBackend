@@ -23,6 +23,12 @@ export const productsView = async (req, res) => {
     res.render("products", { products, hasPrevPage, hasNextPage, nextPage, prevPage, limit, user });
 }
 
+export const realTimeProductsView = async (req, res) => {
+    const { limit = 10, page = 1 } = req.query;
+    const { products, hasPrevPage, hasNextPage, nextPage, prevPage } = await productsService.getProducts(limit, page);
+    res.render("realTimeProducts", { products, hasPrevPage, hasNextPage, nextPage, prevPage, limit });
+}
+
 export const cartsView = async (req, res, next) => {
     try {
         const cid = req.params.cid
