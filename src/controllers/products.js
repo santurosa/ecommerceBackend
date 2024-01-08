@@ -31,8 +31,9 @@ export const getProductById = async (req, res, next) => {
 export const createProducts = async (req, res, next) => {
     const products = req.body;
     const { email } = req.user;
+    const uniqueTitles = new Set();
     try {
-        if (!products) CustomError.createError({
+        if (Object.keys(products).length === 0) CustomError.createError({
             name: "Product creation error",
             cause: createProductErrorInfo(products),
             message: "Error Trying to create Product",
@@ -46,6 +47,13 @@ export const createProducts = async (req, res, next) => {
                 message: "Error Trying to create Product",
                 code: EErrors.INVALID_TYPE_ERROR
             })
+            if (uniqueTitles.has(title)) CustomError.createError({
+                name: "Product creation error",
+                cause: `The title ${title} has been entered on two or more different products. Titles must be unique.`,
+                message: "Duplicate product title found",
+                code: EErrors.INVALID_TYPE_ERROR
+            })
+            uniqueTitles.add(title);
             products[i].owner = email;
         }
         const result = await productsService.createProducts(products);
@@ -59,12 +67,12 @@ export const upgrateProduct = async (req, res, next) => {
     try {
         const id = req.params.pid;
         const upgrate = req.body;
-        if (!upgrate) CustomError.createError({
-                name: "Product upgrate error",
-                cause: upgrateProductErrorInfo(),
-                message: "Error Trying to upgrate Product",
-                code: EErrors.INVALID_TYPE_ERROR
-            })
+        if (Object.keys(upgrate).length === 0) CustomError.createError({
+            name: "Product upgrate error",
+            cause: upgrateProductErrorInfo(),
+            message: "Error Trying to upgrate Product",
+            code: EErrors.INVALID_TYPE_ERROR
+        })
         const result = await productsService.upgrateProduct(req.user.email, id, upgrate);
         res.send({ status: "success", payload: result });
     } catch (error) {

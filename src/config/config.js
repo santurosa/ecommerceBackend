@@ -7,7 +7,7 @@ program.parse();
 const enviroment = program.opts().p
 
 dotenv.config({
-    path: enviroment.toUpperCase() === "FILE" ? "./.env.file" : "./.env.mongo"
+    path: enviroment.toUpperCase() === "FILE" ? "./.env.file" : "./.env"
 });
 
 export default {

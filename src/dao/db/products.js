@@ -67,7 +67,7 @@ export default class Products {
                 name: "Product delete error",
                 cause: searchByMongooseIdErrorInfo(id),
                 message: "Error Deleting Product by ID",
-                code: EErrors.INVALID_TYPE_ERROR
+                code: EErrors.DATABASE_ERROR
             })
             if (email === product.owner || email === config.admin.NAME) {
                 const result = await productsModel.findByIdAndDelete(id);
@@ -98,7 +98,7 @@ export default class Products {
                 name: "Product update error",
                 cause: searchByMongooseIdErrorInfo(id),
                 message: "Error updating Product by ID",
-                code: EErrors.INVALID_TYPE_ERROR
+                code: EErrors.DATABASE_ERROR
             })
             if (email === product.owner || email === config.admin.NAME) {
                 const result = await productsModel.updateOne({ _id: id }, upgrate);
@@ -116,20 +116,18 @@ export default class Products {
 
     updateThumbnails = async (email, id, thumbnail) => {
         try {
-            if (!mongoose.Types.ObjectId.isValid(id)) {
-                CustomError.createError({
-                    name: "Product update error",
-                    cause: getByMongooseIdErrorInfo(id),
-                    message: "Error updating Product by ID",
-                    code: EErrors.INVALID_PARAMS_ERROR
-                })
-            }
+            if (!mongoose.Types.ObjectId.isValid(id)) CustomError.createError({
+                name: "Product update error",
+                cause: getByMongooseIdErrorInfo(id),
+                message: "Error updating Product by ID",
+                code: EErrors.INVALID_PARAMS_ERROR
+            })
             const product = await productsModel.findById(id);
             if (!product) CustomError.createError({
                 name: "Product update error",
                 cause: searchByMongooseIdErrorInfo(id),
                 message: "Error updating Product by ID",
-                code: EErrors.INVALID_TYPE_ERROR
+                code: EErrors.DATABASE_ERROR
             })
             if (email === product.owner || email === config.admin.NAME) {
                 if (product.thumbnail[0] === "Sin imagenes") {

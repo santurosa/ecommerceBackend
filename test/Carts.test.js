@@ -54,18 +54,37 @@ describe('Testing Carts', () => {
     it('El metodo POST de "/api/carts" debe crear un carrito correctamente', async function(){
         expect(mongoose.isValidObjectId(id)).to.be.eqls(true);
     })
+    it('El metodo GET de "/api/carts" debe denegar el obtener el carrito mediante su ID porque se a pasado un ID con un parametro incorrecto', async function(){
+        const { statusCode } = await requester.get(`/api/carts/bb2bdbc16da6a5c3cea8dbd8`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
+        expect(statusCode).to.be.eqls(500);
+    })
     it('El metodo GET de "/api/carts" debe obtener el carrito correctamente mediante su ID', async function(){
         const { body } = await requester.get(`/api/carts/${id}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
         expect(body.payload).to.have.property('_id');
     })
+
     it('El metodo PUT de "/api/carts" debe denegar el añadir un producto al carrito mediante sus IDs porque el usuario es dueño del producto', async function(){
         const { body } = await requester.put(`/api/carts/${id}/product/${idProduct}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
         expect(body.cause).to.be.eqls('You cannot add products you have created to the cart');
+    })
+    it('El metodo PUT de "/api/carts" debe denegar el añadir un producto al carrito mediante sus IDs porque se ha recibido un ID de producto incorrecto', async function(){
+        const { body } = await requester.put(`/api/carts/${id}/product/bb2bdbc16da6a5c3cea8dbd8`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
+        expect(body.cause).to.be.eqls('A document has not been found in the database with the id bb2bdbc16da6a5c3cea8dbd8');
+    })
+    it('El metodo PUT de "/api/carts" debe denegar el añadir un producto al carrito mediante sus IDs porque porque se ha recibido un ID de carrito incorrecto', async function(){
+        const { body } = await requester.put(`/api/carts/bb2bdbc16da6a5c3cea8dbd8/product/${idProduct}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
+        expect(body.cause).to.be.eqls('A document has not been found in the database with the id bb2bdbc16da6a5c3cea8dbd8');
+    })
+
+    it('El metodo DELETE de "/api/carts" debe denegar el obtener el carrito mediante su ID porque se a pasado un ID incorrecto', async function(){
+        const { statusCode } = await requester.delete(`/api/carts/bb2bdbc16da6a5c3cea8dbd8`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
+        expect(statusCode).to.be.eqls(500);
     })
     it('El metodo DELETE de "/api/carts" debe eliminar un carrito correctamente', async function(){
         const { body } = await requester.delete(`/api/carts/${id}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
         expect(body.status).to.be.eqls('success');
     })
+    
     after(async function(){
         await requester.delete(`/api/products/${idProduct}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);
         await requester.delete(`/api/users/${idUser}`).set('Cookie', [`${cookie.name}=${cookie.value}`]);

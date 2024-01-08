@@ -37,12 +37,6 @@ app.use('/static', express.static(`${__dirname}/public`))
 app.use(cookieParser());
 initializePassport();
 app.use(passport.initialize());
-
-app.engine("handlebars", handlebars.engine());
-app.set("views", __dirname + "/views");
-app.set("view engine", "handlebars");
-
-
 app.use(session({
     store: MongoStore.create({
         mongoUrl: urlMongo,
@@ -52,6 +46,10 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+app.engine("handlebars", handlebars.engine());
+app.set("views", __dirname + "/views");
+app.set("view engine", "handlebars");
 
 const swaggerOptions = {
     definition: {
@@ -72,7 +70,6 @@ app.use("/api/messages", chatRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/api/users", userRouter);
 app.use("/api/loggerTest", loggerRouter);
-
 app.use(errorHandler);
 
 const server = app.listen(port, () => {

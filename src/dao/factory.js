@@ -26,18 +26,6 @@ switch (config.environment.PERSISTENCE) {
         const { default: TicketsMongo } = await import("./db/tickets.js");
         Tickets = TicketsMongo;
         break;
-    case 'FILE':
-        const { default: CartsFile } = await import("./fileSystem/carts.js");
-        Carts = CartsFile;
-        const { default: MessagesFile } = await import("./fileSystem/messages.js");
-        Messages = MessagesFile;
-        const { default: ProductsFile } = await import("./fileSystem/products.js");
-        Products = ProductsFile;
-        const { default: UsersFile } = await import("./fileSystem/users.js");
-        Users = UsersFile;
-        const { default: TicketsFile } = await import("./fileSystem/tickets.js");
-        Tickets = TicketsFile;
-        break;
     default:
         logger.warn('No se ha encontrado una persistencia con ese nombre');
         break;
