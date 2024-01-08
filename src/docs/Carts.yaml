@@ -6,7 +6,7 @@ paths:
         - Carts
       responses:
         "200":
-          description: Carrito creado satifactoriamente
+          description: "Carrito creado satifactoriamente. Roles autorizados: PUBLIC."
           content:
             application/json:
               schema:
@@ -15,7 +15,7 @@ paths:
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
   /api/carts/{cid}:
     get:
-      summary: Obtiene un solo carrito a partir de su Id
+      summary: "Obtiene un solo carrito a partir de su Id. Roles autorizados: PUBLIC."
       tags:
         - Carts
       parameters:
@@ -37,7 +37,7 @@ paths:
         "500":
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
     put:
-      summary: Agrega productos a un solo carrito a partir de su Id y de productos que se pasen en el body
+      summary: "Agrega productos a un solo carrito a partir de su Id y de productos que se pasen en el body. Roles autorizados: USER_PREMIUM, USER."
       tags:
         - Carts
       parameters:
@@ -61,7 +61,7 @@ paths:
         "500":
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
     delete:
-      summary: Elimina un solo carrito a partir de su Id
+      summary: "Vacia un solo carrito a partir de su Id. Roles autorizados: PUBLIC."
       tags:
         - Carts
       parameters:
@@ -80,7 +80,7 @@ paths:
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
   /api/carts/{cid}/product/{pid}:
     put:
-      summary: Agrega productos a un solo carrito a partir de su Id y el Id del producto
+      summary: "Agrega productos a un solo carrito a partir de su Id y el Id del producto. Roles autorizados: USER_PREMIUM, USER."
       tags:
         - Carts
       parameters:
@@ -104,7 +104,7 @@ paths:
         "500":
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
     delete:
-      summary: Elimina un solo carrito a partir de su Id
+      summary: "Elimina un solo produto de un carrito a partir de sus Ids. Roles autorizados: PUBLIC."
       tags:
         - Carts
       parameters:
@@ -129,7 +129,7 @@ paths:
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
   /api/carts/{cid}/products/{pid}:
     put:
-      summary: Modifica la cantidad de unidades pedidas de un producto a partir del Id del carrito y de productos que se pasen en el body
+      summary: "Modifica la cantidad de unidades pedidas de un producto a partir del Id del carrito y de productos que se pasen en el body. Roles autorizados: USER_PREMIUM, USER."
       tags:
         - Carts
       parameters:
@@ -160,7 +160,7 @@ paths:
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
   /api/carts/{cid}/purchase:
     post:
-      summary: Cierra una orden vaciando el carrito y generando un Ticket en la base de datos a partir del Id del carrito
+      summary: "Cierra una orden vaciando el carrito y generando un Ticket en la base de datos a partir del Id del carrito. Roles autorizados: USER_PREMIUM, USER."
       tags:
         - Tickets
       parameters:
@@ -181,6 +181,22 @@ paths:
           description: Error al intentar cerrar el carrito debido a que no se recibio un Id valido.
         "500":
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion o busqueda en la base de datos
+  /api/carts/tickets:
+    get:
+      summary: "Obtiene todos los tickets paginados con un limite por defecto de 10 tickets. Roles autorizados: USER_PREMIUM, USER."
+      tags:
+        - Tickets
+      responses:
+        "200":
+          description: Los tickets fueron obtenidos satifactoriamente
+          content:
+            application/json:
+              schemas:
+                type: Array
+                items:
+                  $ref: "#components/schemas/Ticket"
+        "500":
+          description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
 
 components:
   schemas:

@@ -1,7 +1,7 @@
 paths:
   /api/products/:
     get:
-      summary: Obtiene todos los productos paginados con un limite por defecto de 10 productos.
+      summary: "Obtiene todos los productos paginados con un limite por defecto de 10 productos. Roles autorizados: PUBLIC."
       tags:
         - Products
       responses:
@@ -16,7 +16,7 @@ paths:
         "500":
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
     post:
-      summary: Crea un producto
+      summary: "Crea un producto. Roles autorizados: USER, USER_PREMIUM."
       tags:
         - Products
       requestBody:
@@ -38,7 +38,7 @@ paths:
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
   /api/products/{pid}:
     get:
-      summary: Obtiene un solo producto a partir de su Id
+      summary: "Obtiene un solo producto a partir de su Id. Roles autorizados: PUBLIC."
       tags:
         - Products
       parameters:
@@ -60,7 +60,7 @@ paths:
         "500":
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
     put:
-      summary: Actualiza un solo producto a partir de su Id
+      summary: "Actualiza un solo producto a partir de su Id. Roles autorizados: USER, USER_PREMIUM."
       tags:
         - Products
       parameters:
@@ -84,7 +84,7 @@ paths:
         "500":
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
     delete:
-      summary: Elimina un solo producto a partir de su Id
+      summary: "Elimina un solo producto a partir de su Id. Roles autorizados: USER, USER_PREMIUM."
       tags:
         - Products
       parameters:
@@ -103,7 +103,7 @@ paths:
           description: Error interno del servidor, usualmente se debe una query defectuosa o un fallo de conexion con la base de datos
   /api/products/mockingproducts:
     get:
-      summary: Obtiene 100 productos autogenerados aletoriamente.
+      summary: "Obtiene 100 productos autogenerados aletoriamente. Roles autorizados: PUBLIC."
       tags:
         - Products
       responses:
