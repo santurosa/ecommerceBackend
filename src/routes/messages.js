@@ -5,6 +5,6 @@ import { applyPolicy } from "../middlewares/auth.js";
 const router = Router();
 
 router.get("/", applyPolicy(['PUBLIC']), getMessages);
-router.post("/", applyPolicy(['USER']), addMessage);
+router.post("/", applyPolicy(['ADMIN', 'USER', 'USER_PREMIUM']), addMessage);
 
 export default router
