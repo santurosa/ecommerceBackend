@@ -50,9 +50,9 @@ const initializePassport = () => {
         }
     }))
     passport.use("github", new GitHubStrategy({
-        clientID: "Iv1.81081089c45b38d4",
-        clientSecret: "07e1bf386ed8a0c2dc85046c3f8ce459d55a64d6",
-        callbackURL: "http://localhost:8080/api/sessions/githubcallback"
+        clientID: config.github.CLIENT_ID,
+        clientSecret: config.github.CLIENT_SECRET,
+        callbackURL: config.github.CALLBACK_URL
     }, async (accessToken, refreshToken, profile, done) => {
         try {
             const email = !profile._json.email ? `${profile._json.login}@github.register.com` : profile._json.email;
