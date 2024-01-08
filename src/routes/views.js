@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { cartsView, chatView, usersView, loginView, productsView, registerView, recoverPasswordView, restartPasswordView, ticketsView } from "../controllers/views.js";
+import { cartsView, chatView, usersView, loginView, productsView, registerView, recoverPasswordView, restartPasswordView, ticketsView, homeView } from "../controllers/views.js";
 import { viewAccess } from "../middlewares/auth.js";
 
 const router = Router();
 
+router.get("/", homeView);
 router.get("/login", viewAccess('PUBLIC'), loginView);
 router.get("/register", viewAccess('PUBLIC'), registerView);
 router.get("/products", viewAccess('PRIVATE'), productsView);

@@ -4,6 +4,10 @@ import CustomError from "../service/errors/CustomError.js";
 import EErrors from "../service/errors/enums.js";
 import { productsService, cartsService, usersService, ticketsService } from "../repositories/index.js";
 
+export const homeView = (req, res) => {
+    res.render("home", {});
+}
+
 export const loginView = (req, res) => {
     res.render("login");
 }
