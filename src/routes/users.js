@@ -9,7 +9,7 @@ router.get("/", applyPolicy(['ADMIN']), getUsers);
 router.get("/recoverPassword", applyPolicy(['PUBLIC']), recoverPassword);
 router.post("/restartPassword", applyPolicy(['PUBLIC']), restartPassword);
 router.put("/premium/:uid", applyPolicy(['ADMIN', 'USER', 'USER_PREMIUM']), updateRole);
-router.put("/:uid/documents", applyPolicy(['ADMIN', 'USER', 'USER_PREMIUM']), uploader.fields([ { name: 'profile', maxCount: 1 }, { name: 'thumbnail', maxCount: 1 }, { name: 'documents' }]), updateDocuments);
+router.put("/:uid/documents", applyPolicy(['USER', 'USER_PREMIUM']), uploader.fields([ { name: 'profile', maxCount: 1 }, { name: 'thumbnail', maxCount: 1 }, { name: 'documents' }]), updateDocuments);
 router.delete("/:uid", applyPolicy(['ADMIN', 'USER', 'USER_PREMIUM']), deleteUser);
 router.delete("/", applyPolicy(['ADMIN']), deleteInactiveUsers);
 
