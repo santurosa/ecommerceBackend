@@ -106,6 +106,12 @@ export default class Users {
 
             if (name === 'profile') {
                 const existingProfile = await userModel.findOne({ _id: id, 'documents.name': 'profile' });
+                if (!existingProfile) CustomError.createError({
+                    name: "Cart get error",
+                    cause: searchByMongooseIdErrorInfo(id),
+                    message: "Error Getting Cart by ID",
+                    code: EErrors.DATABASE_ERROR
+                })
                 if (existingProfile) {
                     updateQuery = {
                         $set: { 'documents.$[element]': { name, reference } }
