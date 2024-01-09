@@ -1,8 +1,5 @@
 import multer from "multer";
 import __dirname from "../utils.js";
-import CustomError from "../service/errors/CustomError.js";
-import EErrors from "../service/errors/enums.js";
-
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
